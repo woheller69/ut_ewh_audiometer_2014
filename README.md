@@ -70,6 +70,9 @@ There you can manually select ear, frequency, and sound amplitude by clicking on
 
 Backup/restore is also available.
 
+## Contribute
+For translations use https://toolate.othing.xyz/projects/audiometry/
+
 ## License
 
 This app is published under GNU GPL V3 License.
