@@ -1,5 +1,6 @@
 package org.woheller69.audiometry;
 
+import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -22,12 +23,43 @@ public class Sound {
     }
 
     /**
+     * New code that avoids deprecated API except volume setting
      * Writes the parameter byte array to an AudioTrack and plays the array
      * @param generatedSnd- input PCM float array
      */
     public AudioTrack playSound(float[] generatedSnd, int ear, int sampleRate) {
-        AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_FLOAT, generatedSnd.length, AudioTrack.MODE_STATIC);
-        audioTrack.write(generatedSnd,0,generatedSnd.length,AudioTrack.WRITE_BLOCKING);
+        // Define the audio attributes
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build();
+
+        // Define the audio format
+        AudioFormat audioFormat = new AudioFormat.Builder()
+                .setSampleRate(sampleRate)
+                .setEncoding(AudioFormat.ENCODING_PCM_FLOAT)
+                .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                .build();
+
+        // Calculate the buffer size in bytes
+        int bufferSizeInBytes = AudioTrack.getMinBufferSize(sampleRate,
+                AudioFormat.CHANNEL_OUT_MONO,
+                AudioFormat.ENCODING_PCM_FLOAT);
+
+        // Ensure the buffer size is at least the size of the generated sound data
+        bufferSizeInBytes = Math.max(bufferSizeInBytes, generatedSnd.length * 4); // 4 bytes per float
+
+        // Create the AudioTrack
+        AudioTrack audioTrack = new AudioTrack(audioAttributes,
+                audioFormat,
+                bufferSizeInBytes,
+                AudioTrack.MODE_STATIC,
+                0);
+
+        // Write the audio data to the AudioTrack
+        audioTrack.write(generatedSnd, 0, generatedSnd.length, AudioTrack.WRITE_BLOCKING);
+
+        // Set the volume and play the audio
         if (ear == 0) {
             audioTrack.setStereoVolume(0, AudioTrack.getMaxVolume());
         } else {

@@ -7,7 +7,6 @@ import android.media.AudioTrack;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,9 +18,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 public class PerformSingleTest extends AppCompatActivity {
-    private final int duration = 1;
+    private final float duration = 0.27f;
     private final int sampleRate = 44100;
-    private final int numSamples = duration * sampleRate;
+    private final int numSamples = (int) (duration * sampleRate);
     private final int maxVolume = 32767;
     private final int minVolume = 0;
     private double actualVolume = -1;
